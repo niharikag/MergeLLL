@@ -26,12 +26,12 @@ int main() {
     ExperimentInputParams input_params;
     input_params.gen_name="subsetsum";
     input_params.delta = DEFAULT_DELTA;
-    input_params.n = 400;
-    input_params.max_size=400;
-    input_params.block_size=10;
+    input_params.n = 100;
+    input_params.max_size=100;
+    input_params.block_size=30;
     input_params.bits=20;
-    run_experiment(input_params);
-    //run_individual_experiment(input_params);
+    //run_experiment(input_params);
+    run_individual_experiment(input_params);
     return 0;
 }
 

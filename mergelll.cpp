@@ -9,6 +9,7 @@
 #include <future>
 #include <fplll.h>
 #include "blockwise_kz.h"
+#include "ThreadPool.h"
 
 using namespace fplll;
 
@@ -87,8 +88,10 @@ int parallel_mergelll_reduce(MatInt& Basis, int & total_swaps, const int block_s
     int level_swaps = 0;
     std::vector<std::future<void>> block_task;
 
+    ThreadPool pool(std::thread::hardware_concurrency());
+
     for (int b = 0; b < n; b += block_size) {
-        block_task.push_back(std::async(std::launch::async,
+        block_task.push_back(pool.enqueue(
         [&, b]() {
             int end = std::min(b + block_size, n);
             MatInt subBasis(Basis.begin() + b,
@@ -120,7 +123,7 @@ int parallel_mergelll_reduce(MatInt& Basis, int & total_swaps, const int block_s
             int right = std::min(left + 2 * size - 1, n - 1);
 
             if (mid < right) {
-                tasks.push_back(std::async(std::launch::async,
+                tasks.push_back(pool.enqueue(
                     [&Basis, left, mid, right, delta]() -> int {
                         return merge_using_potlll_reduce(Basis, left, mid, right + 1, delta);
                     }
